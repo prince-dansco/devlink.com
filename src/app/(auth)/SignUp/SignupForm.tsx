@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import Link from "next/link";
-import {useUserStore} from "../../store/page"
+import { useUserStore } from "../../store/useUserStore";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,18 +24,30 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Loader2, Mail, LockKeyhole } from "lucide-react";
-import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation";
 
 // 1. Updated Schema for Registration
 const signupSchema = z
   .object({
     email: z.string().email("Please enter a valid email address."),
-    password: z.string().min(8, "Password must be at least 8 characters.").regex(/^(?=.*[A-Z])(?=.*\d)/, "Must include an uppercase letter and a number"),
-    confirmPassword: z.string().min(8, "Please confirm your password.").regex(/^(?=.*[A-Z])(?=.*\d)/, "Must include an uppercase letter and a number"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters.")
+      .regex(
+        /^(?=.*[A-Z])(?=.*\d)/,
+        "Must include an uppercase letter and a number",
+      ),
+    confirmPassword: z
+      .string()
+      .min(8, "Please confirm your password.")
+      .regex(
+        /^(?=.*[A-Z])(?=.*\d)/,
+        "Must include an uppercase letter and a number",
+      ),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"], 
+    path: ["confirmPassword"],
   });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -44,7 +56,6 @@ export function SignUpForm() {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
   const { signUp } = useUserStore();
-  
 
   const {
     register,
@@ -63,22 +74,23 @@ export function SignUpForm() {
   async function onSubmit(data: SignupFormValues) {
     setIsLoading(true);
     try {
-      const result = await signUp({ email: data.email, password: data.password });
-    if (result.success) {
-      toast.success("Account created!",
-         {
-        description: "You can now log in with your credentials.",
-      })
-    router.push('/login')
-    } else {
-      toast.error(result.error || "Login failed");
-    }
+      const result = await signUp({
+        email: data.email,
+        password: data.password,
+      });
+      if (result.success) {
+        toast.success("Account created!", {
+          description: "You can now log in with your credentials.",
+        });
+        router.push("/login");
+      } else {
+        toast.error(result.error || "Login failed");
+      }
     } catch (error) {
       toast.error("Registration failed", {
         description: "Something went wrong. Please try again.",
       });
       console.log(error);
-      
     } finally {
       setIsLoading(false);
     }
@@ -128,12 +140,16 @@ export function SignUpForm() {
                   aria-invalid={!!errors.password}
                 />
               </div>
-              {errors.password && <FieldError>{errors.password.message}</FieldError>}
+              {errors.password && (
+                <FieldError>{errors.password.message}</FieldError>
+              )}
             </Field>
 
             {/* Confirm Password Field */}
             <Field>
-              <FieldLabel htmlFor="confirmPassword">Confirm password</FieldLabel>
+              <FieldLabel htmlFor="confirmPassword">
+                Confirm password
+              </FieldLabel>
               <div className="relative">
                 <LockKeyhole className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input

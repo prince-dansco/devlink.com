@@ -8,7 +8,7 @@ export default function Logo() {
         <Image 
         src='/devlink_logo.png'
         alt='devlink limited logo'
-        quality={100, 75}
+        quality={ 75}
         height={40}
         width={40}
         />

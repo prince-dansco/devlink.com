@@ -24,11 +24,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Loader2, Mail, LockKeyhole } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {useUserStore} from "../../store/page"
+import { useUserStore } from "../../store/useUserStore";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
-  password: z.string().min(8, "Password must be at least 8 characters.").max(15, "Password is too long").regex(/^(?=.*[A-Z])(?=.*\d)/, "Must include an uppercase letter and a number"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters.")
+    .max(15, "Password is too long")
+    .regex(
+      /^(?=.*[A-Z])(?=.*\d)/,
+      "Must include an uppercase letter and a number",
+    ),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -36,7 +43,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const [isLoading, setIsLoading] = React.useState(false);
   const router = useRouter();
-  const {login} = useUserStore();
+  const { login } = useUserStore();
 
   const {
     register,
@@ -55,19 +62,21 @@ export function LoginForm() {
   async function onSubmit(data: LoginFormValues) {
     setIsLoading(true);
     try {
-     const result = await login({ email: data.email, password: data.password });
-    if (result.success) {
-      toast.success("Welcome back!");
-      router.push('/mainLayout');
-    } else {
-      toast.error(result.error || "Login failed");
-    }
+      const result = await login({
+        email: data.email,
+        password: data.password,
+      });
+      if (result.success) {
+        toast.success("Welcome back!");
+        router.push("/mainLayout");
+      } else {
+        toast.error(result.error || "Login failed");
+      }
     } catch (error) {
       toast.error("Login failed", {
         description: "Please check your credentials and try again.",
       });
-      console.log(error, 'Please check your credentials and try again');
-      
+      console.log(error, "Please check your credentials and try again");
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +87,7 @@ export function LoginForm() {
       <CardHeader>
         <CardTitle className="text-4xl font-bold">Login</CardTitle>
         <CardDescription>
-          Enter your credentials to access your account.
+          Enter your credentials to access your account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -95,7 +104,7 @@ export function LoginForm() {
                   type="email"
                   placeholder="name@example.com"
                   disabled={isLoading}
-                  className="pl-10" 
+                  className="pl-10"
                   aria-invalid={!!errors.email}
                 />
               </div>
@@ -113,12 +122,12 @@ export function LoginForm() {
                   id="password"
                   type="password"
                   placeholder="234567y gvhbt •••"
-                   className="pl-10"
+                  className="pl-10"
                   disabled={isLoading}
                   aria-invalid={!!errors.password}
                 />
               </div>
-              
+
               {errors.password && (
                 <FieldError>{errors.password.message}</FieldError>
               )}

@@ -1,5 +1,10 @@
+import { Metadata } from "next";
 import StaticImage from "@/component/images/page";
-import NavBar from "@/component/NavBar/page";
+import NavBar from "@/component/Navbar/page";
+
+
+
+
 export const metadata: Metadata = {
   title: "Devlink main layout",
   description: "Devlink limited plc",
