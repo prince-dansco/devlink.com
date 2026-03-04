@@ -8,8 +8,8 @@ user: null,
 
   signUp: async ({email, password}) =>{
     try {
-        const {data} = await Api.post("/auth/signUp", {email, password})
-        set({use: data.user})
+        const {data} = await Api.post("/auth/signup", {email, password})
+        set({user: data.user})
         return { success: true}
     } catch (error) {
         return { success: false, error: error.response?.data?.message };
@@ -20,7 +20,7 @@ user: null,
   login: async ({email, password}) =>{
     try {
         const {data} = await Api.post("/auth/login", {email, password})
-        set({use: data.user, links: data.user.links || []})
+        set({user: data.user, links: data.user.links || []})
         return { success: true}
     } catch (error) {
         return { success: false, error: error.response?.data?.message };
